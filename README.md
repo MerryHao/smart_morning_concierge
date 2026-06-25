@@ -279,10 +279,6 @@ Go crush it today! 🌟
 ───────────────────────────────────────────────────────────
 ```
 
-### System Architecture
-
-![System Architecture Diagram](docs/architecture.png)
-
 ---
 
 ## 📁 Project Structure
