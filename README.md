@@ -190,13 +190,15 @@ You will see a welcome banner. Enter any Taiwan city or county name and press En
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║       🌅  Smart Morning Concierge                        ║
+║       🌅  智慧早晨出門管家  Smart Morning Concierge       ║
+║              Powered by Google Gemini 2.5 Flash           ║
 ╚══════════════════════════════════════════════════════════╝
+  輸入台灣縣市名稱取得出門建議，輸入 "exit" 離開。
   Enter a Taiwan city/county name for morning advice.
 
-📍 Enter a city (e.g. Taoyuan City) > Taipei City
+📍 請輸入縣市（例如：桃園市）> 台北市
 
-⏳ Fetching weather for Taipei City, please wait...
+⏳ 正在查詢「台北市」的天氣並準備建議，請稍候...
 
 ───────────────────────────────────────────────────────
 Hey! So for Taipei City today, you're looking at a
@@ -292,7 +294,8 @@ smart_morning_concierge/
 ├── templates/
 │   └── index.html       # Web frontend — single-page UI (HTML/CSS/JS)
 ├── docs/
-│   └── architecture.png # System architecture diagram
+│   ├── architecture.png # System architecture diagram
+│   └── web_ui.png       # Web UI screenshot
 ├── requirements.txt     # Python dependencies
 ├── .env.example         # Template for environment variables
 ├── .env                 # Your API keys (⚠️ not committed to git)
