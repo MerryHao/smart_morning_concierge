@@ -131,7 +131,7 @@ Before you begin, make sure you have the following:
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/MerryHao/smart_morning_concierge.git
 cd smart_morning_concierge
 ```
 
@@ -214,17 +214,14 @@ Have an awesome day out there! 💪
 
 Type `exit` or `quit` to quit.
 
-**Supported city inputs** (abbreviations are accepted):
+**How to enter city names:**
 
-| Input | Resolves to |
-|---|---|
-| `Taipei City` | Taipei City |
-| `New Taipei City` | New Taipei City |
-| `Taoyuan City` | Taoyuan City |
-| `Taichung City` | Taichung City |
-| `Tainan City` | Tainan City |
-| `Kaohsiung City` | Kaohsiung City |
-| All 22 counties / cities | ✅ supported |
+> The CLI accepts **Traditional Chinese** city names. The web UI accepts **English** names via the quick-select chips, which automatically map to the correct Chinese names.
+
+| Interface | Input example | Notes |
+|---|---|---|
+| CLI (`main_agent.py`) | `台北市`, `桃園市`, `高雄市` | Traditional Chinese required; abbreviations like `台北` also work |
+| Web UI (`server.py`) | Click a city chip or type in English | Chips auto-map to correct API names |
 
 ### Option B — Web Mode (Browser UI)
 
@@ -253,6 +250,10 @@ This runs a quick smoke-test against three cities (Taipei City, Taoyuan City, Ka
 
 ## 📸 Screenshots & Demo
 
+### Web UI
+
+![Web UI](docs/web_ui.png)
+
 ### CLI Mode — Terminal Output
 
 ```
@@ -261,9 +262,9 @@ This runs a quick smoke-test against three cities (Taipei City, Taoyuan City, Ka
 ╚══════════════════════════════════════════════════════════╝
   Enter a Taiwan city/county name for morning advice.
 
-📍 Enter a city (e.g. Taoyuan City) > Taoyuan City
+📍 請輸入縣市（例如：桃園市）> 桃園市
 
-⏳ Fetching weather for Taoyuan City, please wait...
+⏳ 正在查詢「桃園市」的天氣並準備建議，請稍候...
 
 ───────────────────────────────────────────────────────────
 Good morning! Taoyuan City is looking mostly cloudy today,
