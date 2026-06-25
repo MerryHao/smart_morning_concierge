@@ -233,9 +233,14 @@ python server.py
 
 Then open your browser at **[http://localhost:5001](http://localhost:5001)**.
 
+The page header displays:
+- **Title:** Smart Morning Concierge
+- **Subtitle:** Your AI-powered outfit & weather advisor
+
 The web interface offers:
-- A clean card-based weather display (temperature, precipitation, weather condition).
-- The AI concierge advice rendered in a styled panel.
+- Quick-select city chips (Taipei, New Taipei, Taoyuan, Taichung, Tainan, Kaohsiung) for one-click lookup.
+- A weather card showing condition, temperature range, and precipitation probability.
+- An AI advice panel with outfit suggestions and umbrella reminder.
 - Responsive design for desktop and mobile.
 
 ### Option C — Test the Weather Tool Standalone
@@ -260,8 +265,10 @@ This runs a quick smoke-test against three cities (Taipei City, Taoyuan City, Ka
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║       🌅  Smart Morning Concierge                        ║
+║       🌅  智慧早晨出門管家  Smart Morning Concierge       ║
+║              Powered by Google Gemini 2.5 Flash           ║
 ╚══════════════════════════════════════════════════════════╝
+  輸入台灣縣市名稱取得出門建議，輸入 "exit" 離開。
   Enter a Taiwan city/county name for morning advice.
 
 📍 請輸入縣市（例如：桃園市）> 桃園市
