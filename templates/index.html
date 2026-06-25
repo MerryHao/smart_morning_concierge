@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌅 Smart Morning Concierge</title>
+  <meta name="description" content="Enter a Taiwan city and let your AI morning concierge fetch the latest weather and give you personalised outfit &amp; umbrella advice." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dawn-deep:   #0d0a1e;
+      --dawn-mid:    #1a1040;
+      --dawn-purple: #2d1b69;
+      --dawn-rose:   #8b3a6b;
+      --dawn-orange: #d4622a;
+      --dawn-gold:   #f5a623;
+      --glass-bg:    rgba(255,255,255,0.06);
+      --glass-border:rgba(255,255,255,0.12);
+      --text-primary:#f0eeff;
+      --text-secondary:#a89ec9;
+      --accent:      #a78bfa;
+      --accent-glow: rgba(167,139,250,0.35);
+      --success:     #34d399;
+      --warning:     #fbbf24;
+      --info:        #60a5fa;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
+      --shadow-card: 0 8px 40px rgba(0,0,0,0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: var(--dawn-deep);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Animated Sky Background ──────────────────────────────── */
+    .sky-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+        160deg,
+        #0d0a1e 0%,
+        #1a1040 25%,
+        #2d1b69 50%,
+        #8b3a6b 72%,
+        #d4622a 88%,
+        #f5a623 100%
+      );
+      background-size: 300% 300%;
+      animation: skyShift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes skyShift {
+      0%   { background-position: 0% 0%; }
+      50%  { background-position: 60% 40%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    /* Stars */
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      from { opacity: 0; transform: scale(0.8); }
+      to   { opacity: var(--max-op, 0.7); transform: scale(1.2); }
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .logo-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      box-shadow: 0 0 30px var(--accent-glow);
+      backdrop-filter: blur(10px);
+      animation: pulseSun 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseSun {
+      0%, 100% { box-shadow: 0 0 30px var(--accent-glow); }
+      50%       { box-shadow: 0 0 60px var(--accent-glow), 0 0 100px rgba(245,166,35,0.2); }
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #f0eeff 0%, #a78bfa 50%, #f5a623 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Search Card ──────────────────────────────────────────── */
+    .search-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card);
+      animation: fadeUp 0.9s ease 0.1s both;
+      margin-bottom: 32px;
+    }
+
+    .search-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    #city-input {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1.05rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+    #city-input::placeholder { color: rgba(168,158,201,0.5); }
+    #city-input:focus {
+      border-color: var(--accent);
+      background: rgba(167,139,250,0.08);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.18), 0 0 20px rgba(167,139,250,0.12);
+    }
+
+    #search-btn {
+      padding: 14px 26px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff;
+      transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    }
+    #search-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(124,58,237,0.55);
+    }
+    #search-btn:active:not(:disabled) { transform: translateY(0); }
+    #search-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .chip:hover {
+      background: rgba(167,139,250,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Result Area ──────────────────────────────────────────── */
+    #result-area {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Skeleton Loading */
+    .skeleton-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      animation: fadeUp 0.4s ease both;
+    }
+    .skeleton-line {
+      height: 14px;
+      border-radius: 7px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      margin-bottom: 12px;
+    }
+    .skeleton-line.wide  { width: 80%; }
+    .skeleton-line.mid   { width: 55%; }
+    .skeleton-line.short { width: 35%; }
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* Weather Card */
+    .weather-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .card-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+    }
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .weather-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px;
+      transition: transform 0.2s;
+    }
+    .weather-stat:hover { transform: translateY(-2px); }
+
+    .stat-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .pop-bar-wrap { margin-top: 6px; }
+    .pop-bar-bg {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .pop-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #60a5fa, #34d399);
+      transition: width 1s ease;
+    }
+
+    .weather-period {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Advice Card */
+    .advice-card {
+      background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(167,139,250,0.06));
+      border: 1px solid rgba(167,139,250,0.25);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-card), 0 0 40px rgba(124,58,237,0.1);
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .advice-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ai-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .advice-text {
+      font-size: 0.97rem;
+      line-height: 1.8;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent);
+      vertical-align: text-bottom;
+      margin-left: 1px;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Error Card */
+    .error-card {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      animation: fadeUp 0.4s ease both;
+    }
+    .error-card .error-icon { font-size: 2rem; margin-bottom: 10px; }
+    .error-card p { color: #fca5a5; font-size: 0.92rem; line-height: 1.6; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px;
+      color: rgba(168,158,201,0.5);
+      font-size: 0.78rem;
+    }
+
+    /* ── Keyframes ────────────────────────────────────────────── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .search-card { padding: 22px; }
+      .search-row { flex-direction: column; }
+      #search-btn { width: 100%; justify-content: center; }
+      .weather-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated sky background -->
+  <div class="sky-bg"></div>
+  <div class="stars" id="stars"></div>
+
+  <div class="page-wrapper">
+
+    <!-- Header -->
+    <header>
+      <div class="logo-ring">🌅</div>
+      <h1>Smart Morning Concierge</h1>
+      <p class="subtitle">Your AI-powered outfit &amp; weather advisor</p>
+    </header>
+
+    <!-- Search Card -->
+    <div class="search-card">
+      <label class="search-label" for="city-input">Enter a Taiwan City</label>
+      <div class="search-row">
+        <input
+          id="city-input"
+          type="text"
+          placeholder="e.g. Taipei, Taoyuan, Kaohsiung"
+          autocomplete="off"
+          maxlength="20"
+        />
+        <button id="search-btn" onclick="fetchAdvice()">
+          Get Advice
+        </button>
+      </div>
+      <div class="quick-chips">
+        <span class="chip" onclick="selectCity('台北市','Taipei')">🏙 Taipei</span>
+        <span class="chip" onclick="selectCity('新北市','New Taipei')">🌆 New Taipei</span>
+        <span class="chip" onclick="selectCity('桃園市','Taoyuan')">✈️ Taoyuan</span>
+        <span class="chip" onclick="selectCity('台中市','Taichung')">🌳 Taichung</span>
+        <span class="chip" onclick="selectCity('台南市','Tainan')">🏯 Tainan</span>
+        <span class="chip" onclick="selectCity('高雄市','Kaohsiung')">🌊 Kaohsiung</span>
+      </div>
+    </div>
+
+    <!-- Result Area -->
+    <div id="result-area"></div>
+
+  </div>
+
+  <footer>
+    🌅 Smart Morning Concierge &nbsp;·&nbsp; Kaggle AI Agents Capstone 2026
+    &nbsp;·&nbsp; Weather data: Taiwan Central Weather Administration
+  </footer>
+
+  <script>
+    // ── Star Generator ───────────────────────────────────────────
+    (function generateStars() {
+      const container = document.getElementById('stars');
+      const count = 80;
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        star.style.cssText = `
+          width: ${size}px; height: ${size}px;
+          top: ${Math.random() * 70}%;
+          left: ${Math.random() * 100}%;
+          --dur: ${(Math.random() * 3 + 2).toFixed(1)}s;
+          --max-op: ${(Math.random() * 0.5 + 0.2).toFixed(2)};
+          animation-delay: ${(Math.random() * 4).toFixed(1)}s;
+        `;
+        container.appendChild(star);
+      }
+    })();
+
+    // ── City Name Maps ────────────────────────────────────────────
+    // English input → Chinese for CWA API
+    const CITY_EN_TO_ZH = {
+      'taipei': '台北市', 'taipei city': '台北市',
+      'new taipei': '新北市', 'new taipei city': '新北市',
+      'taoyuan': '桃園市', 'taoyuan city': '桃園市',
+      'taichung': '台中市', 'taichung city': '台中市',
+      'tainan': '台南市', 'tainan city': '台南市',
+      'kaohsiung': '高雄市', 'kaohsiung city': '高雄市',
+      'keelung': '基隆市', 'keelung city': '基隆市',
+      'hsinchu': '新竹市', 'hsinchu city': '新竹市', 'hsinchu county': '新竹縣',
+      'miaoli': '苗栗縣', 'miaoli county': '苗栗縣',
+      'changhua': '彰化縣', 'changhua county': '彰化縣',
+      'nantou': '南投縣', 'nantou county': '南投縣',
+      'yunlin': '雲林縣', 'yunlin county': '雲林縣',
+      'chiayi': '嘉義市', 'chiayi city': '嘉義市', 'chiayi county': '嘉義縣',
+      'pingtung': '屏東縣', 'pingtung county': '屏東縣',
+      'yilan': '宜蘭縣', 'yilan county': '宜蘭縣',
+      'hualien': '花蓮縣', 'hualien county': '花蓮縣',
+      'taitung': '台東縣', 'taitung county': '台東縣',
+      'penghu': '澎湖縣', 'penghu county': '澎湖縣',
+      'kinmen': '金門縣', 'kinmen county': '金門縣',
+      'matsu': '連江縣', 'matsu county': '連江縣',
+    };
+
+    // Chinese location (from CWA) → English display
+    const CITY_ZH_TO_EN = {
+      '臺北市': 'Taipei City',   '台北市': 'Taipei City',
+      '新北市': 'New Taipei City',
+      '桃園市': 'Taoyuan City',
+      '臺中市': 'Taichung City', '台中市': 'Taichung City',
+      '臺南市': 'Tainan City',   '台南市': 'Tainan City',
+      '高雄市': 'Kaohsiung City',
+      '基隆市': 'Keelung City',
+      '新竹市': 'Hsinchu City',  '新竹縣': 'Hsinchu County',
+      '苗栗縣': 'Miaoli County',
+      '彰化縣': 'Changhua County',
+      '南投縣': 'Nantou County',
+      '雲林縣': 'Yunlin County',
+      '嘉義市': 'Chiayi City',   '嘉義縣': 'Chiayi County',
+      '屏東縣': 'Pingtung County',
+      '宜蘭縣': 'Yilan County',
+      '花蓮縣': 'Hualien County',
+      '臺東縣': 'Taitung County','台東縣': 'Taitung County',
+      '澎湖縣': 'Penghu County',
+      '金門縣': 'Kinmen County',
+      '連江縣': 'Matsu County',
+    };
+
+    // ── UI Helpers ───────────────────────────────────────────────
+    // chip click: show English in input, store Chinese for API
+    function selectCity(zhName, enName) {
+      const input = document.getElementById('city-input');
+      input.value = enName || zhName;
+      input.dataset.zhName = zhName;  // hidden Chinese name for API
+      fetchAdvice();
+    }
+
+    // Resolve whatever the user typed / chip set to a Chinese city name for CWA
+    function resolveCity() {
+      const input = document.getElementById('city-input');
+      const raw = input.value.trim();
+      if (!raw) return '';
+      // If chip was clicked, use stored Chinese name
+      if (input.dataset.zhName && input.dataset.zhName !== '') {
+        const zh = input.dataset.zhName;
+        input.dataset.zhName = '';  // clear after use
+        return zh;
+      }
+      // Try English→Chinese lookup (case-insensitive)
+      return CITY_EN_TO_ZH[raw.toLowerCase()] || raw;
+    }
+
+    function setLoading() {
+      document.getElementById('search-btn').disabled = true;
+      document.getElementById('result-area').innerHTML = `
+        <div class="skeleton-card">
+          <div class="skeleton-line wide"></div>
+          <div class="skeleton-line short" style="margin-bottom:20px"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="skeleton-line" style="height:70px;margin:0;border-radius:14px"></div>
+            <div class="skeleton-line" style="height:70px;margin:0;border-radius:14px"></div>
+            <div class="skeleton-line" style="height:70px;margin:0;border-radius:14px"></div>
+            <div class="skeleton-line" style="height:70px;margin:0;border-radius:14px"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-line wide"></div>
+          <div class="skeleton-line mid"></div>
+          <div class="skeleton-line wide"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      `;
+    }
+
+    function resetButton() {
+      document.getElementById('search-btn').disabled = false;
+    }
+
+    // ── Weather Condition Translation (CWA Chinese → English) ──────────
+    const WX_TRANSLATIONS = {
+      '晴': 'Sunny', '晋': 'Sunny', '多雲': 'Cloudy', '陰': 'Overcast',
+      '晴時多雲': 'Mostly sunny', '多雲時晴': 'Partly cloudy',
+      '多雲時陰': 'Mostly cloudy', '陰時多雲': 'Cloudy to overcast',
+      '晴短暫陣雨': 'Sunny with brief showers',
+      '多雲短暫陣雨': 'Cloudy with brief showers',
+      '陰短暫陣雨': 'Overcast with brief showers',
+      '陰短暫陣雨或雷雨': 'Overcast with showers or thunderstorms',
+      '陰時多雲短暫陣雨或雷雨': 'Cloudy with showers or thunderstorms',
+      '陰時多雲陣雨或雷雨': 'Cloudy with rain or thunderstorms',
+      '多雲陣雨': 'Rainy', '陣雨': 'Showers', '雷雨': 'Thunderstorms',
+      '多雲陣雨或雷雨': 'Showers or thunderstorms',
+      '大雨': 'Heavy rain', '暴雨': 'Torrential rain',
+    };
+    function translateWx(wx) {
+      if (!wx) return '—';
+      return WX_TRANSLATIONS[wx] || wx;
+    }
+
+    function popColor(pop) {
+      const v = parseInt(pop);
+      if (isNaN(v)) return '#60a5fa';
+      if (v >= 70) return '#f87171';
+      if (v >= 40) return '#fbbf24';
+      return '#34d399';
+    }
+
+    function renderResults(city, weather, advice) {
+      const popVal = parseInt(weather.pop) || 0;
+      const fillColor = popColor(weather.pop);
+      const wxEn = translateWx(weather.wx);
+      const locationEn = CITY_ZH_TO_EN[weather.location] || weather.location;
+
+      const weatherCard = (weather.wx || weather.pop || weather.minT) ? `
+        <div class="weather-card">
+          <div class="card-label">📡 Weather Forecast — ${locationEn || city}</div>
+          <div class="weather-grid">
+            <div class="weather-stat">
+              <div class="stat-icon">🌤</div>
+              <div class="stat-label">Condition</div>
+              <div class="stat-value" style="font-size:0.88rem">${wxEn}</div>
+            </div>
+            <div class="weather-stat">
+              <div class="stat-icon">🌡</div>
+              <div class="stat-label">Temperature</div>
+              <div class="stat-value">${weather.minT ? weather.minT + '°C – ' + weather.maxT + '°C' : '—'}</div>
+            </div>
+            <div class="weather-stat" style="grid-column:1/-1">
+              <div class="stat-icon">🌧</div>
+              <div class="stat-label">Precipitation Chance</div>
+              <div class="stat-value" style="color:${fillColor}">${weather.pop ? weather.pop + '%' : '—'}</div>
+              <div class="pop-bar-wrap">
+                <div class="pop-bar-bg">
+                  <div class="pop-bar-fill" id="pop-fill" style="width:0%;background:${fillColor}"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          ${weather.period ? `<div class="weather-period">🕐 Forecast period: ${weather.period}</div>` : ''}
+        </div>
+      ` : '';
+
+      const resultArea = document.getElementById('result-area');
+      resultArea.innerHTML = weatherCard + `
+        <div class="advice-card">
+          <div class="advice-text" id="advice-text"></div>
+        </div>
+      `;
+
+      // Animate rain bar
+      if (weather.pop) {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            const fill = document.getElementById('pop-fill');
+            if (fill) fill.style.width = Math.min(popVal, 100) + '%';
+          }, 200);
+        });
+      }
+
+      // Typewriter effect for advice
+      typeWrite('advice-text', advice, 18);
+    }
+
+    function typeWrite(elementId, text, speed = 20) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.textContent = '';
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor-blink';
+      el.appendChild(cursor);
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < text.length) {
+          cursor.insertAdjacentText('beforebegin', text[i]);
+          i++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => cursor.remove(), 800);
+        }
+      }, speed);
+    }
+
+    function renderError(message) {
+      document.getElementById('result-area').innerHTML = `
+        <div class="error-card">
+          <div class="error-icon">⚠️</div>
+          <p>${message}</p>
+        </div>
+      `;
+    }
+
+    // ── Main Fetch Function ──────────────────────────────────────
+    async function fetchAdvice() {
+      const city = resolveCity();
+      if (!city) {
+        document.getElementById('city-input').focus();
+        return;
+      }
+
+      setLoading();
+
+      try {
+        const resp = await fetch('/api/advice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ city }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.success) {
+          renderError(data.error || 'An unexpected error occurred. Please try again later.');
+        } else {
+          renderResults(data.city, data.weather, data.advice);
+        }
+      } catch (err) {
+        renderError('Cannot connect to the server. Please make sure <code>server.py</code> is running.<br><br><code>' + err.message + '</code>');
+      } finally {
+        resetButton();
+      }
+    }
+
+    // ── Enter Key Support ────────────────────────────────────────
+    document.getElementById('city-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') fetchAdvice();
+    });
+  </script>
+</body>
+</html>
