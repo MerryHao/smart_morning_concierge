@@ -187,15 +187,14 @@ python main_agent.py
 ```
 
 You will see a welcome banner. Enter any Taiwan city or county name and press Enter:
+The page header displays:
+
+> **Smart Morning Concierge**
+> *Your AI-powered outfit & weather advisor*
+
+For the **CLI**, enter a city name when prompted:
 
 ```
-╔══════════════════════════════════════════════════════════╗
-║       🌅  智慧早晨出門管家  Smart Morning Concierge       ║
-║              Powered by Google Gemini 2.5 Flash           ║
-╚══════════════════════════════════════════════════════════╝
-  輸入台灣縣市名稱取得出門建議，輸入 "exit" 離開。
-  Enter a Taiwan city/county name for morning advice.
-
 📍 請輸入縣市（例如：桃園市）> 台北市
 
 ⏳ 正在查詢「台北市」的天氣並準備建議，請稍候...
@@ -264,13 +263,6 @@ This runs a quick smoke-test against three cities (Taipei City, Taoyuan City, Ka
 ### CLI Mode — Terminal Output
 
 ```
-╔══════════════════════════════════════════════════════════╗
-║       🌅  智慧早晨出門管家  Smart Morning Concierge       ║
-║              Powered by Google Gemini 2.5 Flash           ║
-╚══════════════════════════════════════════════════════════╝
-  輸入台灣縣市名稱取得出門建議，輸入 "exit" 離開。
-  Enter a Taiwan city/county name for morning advice.
-
 📍 請輸入縣市（例如：桃園市）> 桃園市
 
 ⏳ 正在查詢「桃園市」的天氣並準備建議，請稍候...
