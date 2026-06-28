@@ -602,23 +602,53 @@
     }
 
     // ── Weather Condition Translation (CWA Chinese → English) ──────────
+    // Complete mapping of all 36 CWA F-C0032-001 weather phenomenon codes
     const WX_TRANSLATIONS = {
-      '晴': 'Sunny', '晋': 'Sunny', '多雲': 'Cloudy', '陰': 'Overcast',
-      '晴時多雲': 'Mostly sunny', '多雲時晴': 'Partly cloudy',
-      '多雲時陰': 'Mostly cloudy', '陰時多雲': 'Cloudy to overcast',
-      '晴短暫陣雨': 'Sunny with brief showers',
-      '多雲短暫陣雨': 'Cloudy with brief showers',
-      '陰短暫陣雨': 'Overcast with brief showers',
-      '陰短暫陣雨或雷雨': 'Overcast with showers or thunderstorms',
-      '陰時多雲短暫陣雨或雷雨': 'Cloudy with showers or thunderstorms',
-      '陰時多雲陣雨或雷雨': 'Cloudy with rain or thunderstorms',
-      '多雲陣雨': 'Rainy', '陣雨': 'Showers', '雷雨': 'Thunderstorms',
-      '多雲陣雨或雷雨': 'Showers or thunderstorms',
-      '大雨': 'Heavy rain', '暴雨': 'Torrential rain',
+      '晴':                         'Sunny',
+      '晴時多雲':                   'Mostly sunny',
+      '多雲時晴':                   'Partly cloudy',
+      '多雲':                       'Cloudy',
+      '多雲時陰':                   'Mostly cloudy',
+      '陰時多雲':                   'Cloudy to overcast',
+      '陰':                         'Overcast',
+      '晴短暫雨':                   'Sunny with brief rain',
+      '晴短暫陣雨':                 'Sunny with brief showers',
+      '晴午後短暫雷陣雨':           'Sunny, afternoon thundershowers',
+      '晴時多雲短暫陣雨':           'Mostly sunny with brief showers',
+      '晴時多雲午後短暫雷陣雨':     'Mostly sunny, afternoon thundershowers',
+      '多雲時晴短暫陣雨':           'Partly cloudy with brief showers',
+      '多雲時晴午後短暫雷陣雨':     'Partly cloudy, afternoon thundershowers',
+      '多雲短暫陣雨':               'Cloudy with brief showers',
+      '多雲短暫陣雨或雷雨':         'Cloudy with showers or thunderstorms',
+      '多雲陣雨':                   'Rainy',
+      '多雲陣雨或雷雨':             'Showers or thunderstorms',
+      '多雲時陰短暫陣雨':           'Mostly cloudy with brief showers',
+      '多雲時陰短暫陣雨或雷雨':     'Mostly cloudy with showers or thunderstorms',
+      '多雲時陰陣雨或雷雨':         'Mostly cloudy, rain or thunderstorms',
+      '陰時多雲短暫陣雨':           'Cloudy with brief showers',
+      '陰時多雲短暫陣雨或雷雨':     'Cloudy with showers or thunderstorms',
+      '陰時多雲陣雨或雷雨':         'Cloudy with rain or thunderstorms',
+      '陰短暫陣雨':                 'Overcast with brief showers',
+      '陰短暫陣雨或雷雨':           'Overcast with showers or thunderstorms',
+      '陰陣雨或雷雨':               'Overcast, rain or thunderstorms',
+      '陰陣雨':                     'Overcast with rain',
+      '陣雨':                       'Showers',
+      '陣雨或雷雨':                 'Showers or thunderstorms',
+      '雷雨':                       'Thunderstorms',
+      '大雨':                       'Heavy rain',
+      '豪雨':                       'Very heavy rain',
+      '大豪雨':                     'Extreme rain',
+      '超大豪雨':                   'Torrential rain',
+      '暴風雨':                     'Storm',
+      '有霧':                       'Foggy',
+      '霧':                         'Fog',
     };
     function translateWx(wx) {
       if (!wx) return '—';
-      return WX_TRANSLATIONS[wx] || wx;
+      if (WX_TRANSLATIONS[wx]) return WX_TRANSLATIONS[wx];
+      // Fallback: if still Chinese, label as "Cloudy" to avoid raw Chinese in UI
+      if (/[\u4e00-\u9fff]/.test(wx)) return 'Cloudy';
+      return wx;
     }
 
     function popColor(pop) {
